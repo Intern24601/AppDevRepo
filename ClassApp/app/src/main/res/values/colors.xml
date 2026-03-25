@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/values/colors.xml -->
+<resources>
+    <!-- Backgrounds -->
+    <color name="bg_primary">#F0F4F8</color>
+    <color name="card_bg">#FFFFFF</color>
+    <color name="result_card_bg">#1A2340</color>
+
+    <!-- Theme Colors -->
+    <color name="primary">#2E7CF6</color>
+    <color name="primary_variant">#1A56B8</color>
+
+    <!-- Text -->
+    <color name="text_primary">#1A2340</color>
+    <color name="text_secondary">#8896A5</color>
+    <color name="white">#FFFFFF</color>
+    <color name="white_70">#B3FFFFFF</color>
+
+    <!-- Category accent colors -->
+    <color name="accent_currency">#2E7CF6</color>  <!-- Blue  -->
+    <color name="accent_fuel">#22C55E</color>       <!-- Green -->
+    <color name="accent_temp">#F97316</color>       <!-- Orange-->
+
+    <!-- Misc -->
+    <color name="divider">#E8EDF2</color>
+    <color name="spinner_border">#D1D9E0</color>
+    <color name="input_border">#D1D9E0</color>
+    <color name="input_focus_border">#2E7CF6</color>
+</resources>
