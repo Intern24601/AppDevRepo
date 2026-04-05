@@ -8,7 +8,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -34,14 +33,14 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvResult;       // Displays the converted value
     private TextView tvResultLabel;  // Displays the "RESULT" header
 
-    // ===CATEGORY CONSTANTS===
+    // CATEGORY CONSTANTS
     private static final String CAT_CURRENCY    = "💱  Currency";
     private static final String CAT_EFFICIENCY  = "⛽  Fuel Efficiency";
     private static final String CAT_DISTANCE    = "📏  Distance";
     private static final String CAT_VOLUME      = "🧪  Volume";
     private static final String CAT_TEMPERATURE = "🌡  Temperature";
 
-    // ===UNIT CONVERSION DATA===
+    // UNIT CONVERSION DATA
 
     // Currency conversion rates (relative to 1 USD)
     private static final Map<String, Double> CURRENCY_TO_USD = new LinkedHashMap<>();
@@ -63,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         USD_TO_CURRENCY.put("GBP", 0.78);
     }
 
-    // ===LIFECYCLE METHODS===
+    // LIFECYCLE METHODS
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         setupConvertButton();
     }
 
-    // ===SETUP METHODS===
+    // SETUP METHODS
 
     /**
      * Finds and assigns all UI components from the layout.
@@ -182,12 +181,12 @@ public class MainActivity extends AppCompatActivity {
             String dest     = spinnerDest.getSelectedItem().toString();
 
             if (source.equals(dest)) {
-                showResult(inputValue, dest);
+                showResult(inputValue, dest, category);
                 return;
             }
 
             double result = convert(category, source, dest, inputValue);
-            showResult(result, dest);
+            showResult(result, dest, category);
         });
     }
 
@@ -214,8 +213,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private double convertCurrency(String source, String dest, double value) {
-        double inUSD = value * CURRENCY_TO_USD.getOrDefault(source, 1.0);
-        return inUSD * USD_TO_CURRENCY.getOrDefault(dest, 1.0);
+        Double sourceRate = CURRENCY_TO_USD.get(source);
+        double inUSD = value * (sourceRate != null ? sourceRate : 1.0);
+        Double destRate = USD_TO_CURRENCY.get(dest);
+        return inUSD * (destRate != null ? destRate : 1.0);
     }
 
     /**
@@ -225,6 +226,8 @@ public class MainActivity extends AppCompatActivity {
      */
     private double convertEfficiency(String source, String dest, double value) {
         if (value <= 0) return 0; // Avoid division by zero
+        // Both units (mpg and L/100km) use the same inverse formula for conversion
+        // If source equals dest, it's handled upstream.
         return 235.215 / value;
     }
 
@@ -294,9 +297,48 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Formats and displays the conversion result with appropriate pluralization.
      */
-    private void showResult(double result, String destUnit) {
-        // Format to 2 decimal places and strip unnecessary trailing zeros
-        String formatted = String.format("%.2f", result).replaceAll("0*$", "").replaceAll("\\.$", "");
+    private void showResult(double result, String destUnit, String category) {
+        // Use different precision based on category/unit
+        String pattern = "%.2f"; // Default to 2 decimal places
+
+        switch (category) {
+            case CAT_CURRENCY:
+                if (destUnit.equals("JPY")) {
+                    pattern = "%.0f"; // Japanese Yen usually doesn't use decimals
+                } else {
+                    pattern = "%.2f"; // Most currencies use 2 decimal places
+                }
+                break;
+            case CAT_DISTANCE:
+            case CAT_VOLUME:
+                pattern = "%.4f"; // Distance and Volume benefit from higher precision
+                break;
+            case CAT_EFFICIENCY:
+            case CAT_TEMPERATURE:
+                pattern = "%.2f"; // Efficiency and Temperature are usually fine with 2
+                break;
+        }
+
+        // Format to the chosen precision
+        String formatted = String.format(java.util.Locale.US, pattern, result);
+
+        // Strip unnecessary trailing zeros for non-currency units (e.g., 1.50 -> 1.5)
+        // For Currency (except JPY), we keep exactly 2 decimal places (e.g., 10.50)
+        // We only strip if a decimal point exists to avoid turning 150 into 15
+        if (!category.equals(CAT_CURRENCY) || destUnit.equals("JPY")) {
+            if (formatted.contains(".")) {
+                formatted = formatted.replaceAll("0*$", "").replaceAll("\\.$", "");
+            }
+        }
+
+        // Safeguard: If the result is non-zero but formatted to "0" due to precision,
+        // use more decimal places to show it's not actually zero.
+        if (result != 0 && (formatted.equals("0") || formatted.equals("-0") || formatted.isEmpty())) {
+            formatted = String.format(java.util.Locale.US, "%.6f", result);
+            if (formatted.contains(".")) {
+                formatted = formatted.replaceAll("0*$", "").replaceAll("\\.$", "");
+            }
+        }
         
         // Determine the correct singular/plural form of the unit
         String finalUnit = formatted.equals("1") ? destUnit : getPluralUnit(destUnit);
