@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/eventListFragment">
+
+    <fragment
+        android:id="@+id/eventListFragment"
+        android:name="com.example.a41p.ui.EventListFragment"
+        android:label="Upcoming Events"
+        tools:layout="@layout/fragment_event_list">
+        <action
+            android:id="@+id/action_eventListFragment_to_addEditEventFragment"
+            app:destination="@id/addEditEventFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addEditEventFragment"
+        android:name="com.example.a41p.ui.AddEditEventFragment"
+        android:label="Add/Edit Event"
+        tools:layout="@layout/fragment_add_edit_event">
+        <argument
+            android:name="eventId"
+            android:defaultValue="-1L"
+            app:argType="long" />
+    </fragment>
+</navigation>
