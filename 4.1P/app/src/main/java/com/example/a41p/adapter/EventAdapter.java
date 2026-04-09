@@ -11,6 +11,7 @@ import com.example.a41p.databinding.ItemEventBinding;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Adapter for the RecyclerView in EventListFragment.
@@ -55,9 +56,9 @@ public class EventAdapter extends ListAdapter<Event, EventAdapter.EventViewHolde
         @Override
         public boolean areContentsTheSame(@NonNull Event oldItem, @NonNull Event newItem) {
             // Check if the contents of the objects are identical
-            return oldItem.getTitle().equals(newItem.getTitle()) &&
-                    oldItem.getCategory().equals(newItem.getCategory()) &&
-                    oldItem.getLocation().equals(newItem.getLocation()) &&
+            return Objects.equals(oldItem.getTitle(), newItem.getTitle()) &&
+                    Objects.equals(oldItem.getCategory(), newItem.getCategory()) &&
+                    Objects.equals(oldItem.getLocation(), newItem.getLocation()) &&
                     oldItem.getDateTime() == newItem.getDateTime();
         }
     };

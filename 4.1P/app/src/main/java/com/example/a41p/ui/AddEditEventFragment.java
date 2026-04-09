@@ -39,6 +39,12 @@ public class AddEditEventFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Restore date if we're coming back from a rotation
+        if (savedInstanceState != null) {
+            selectedCalendar.setTimeInMillis(savedInstanceState.getLong("selected_date"));
+            updateDateDisplay();
+        }
+
         // Get a reference to the MainActivity to use its centralized methods
         MainActivity activity = (MainActivity) requireActivity();
 
@@ -49,7 +55,9 @@ public class AddEditEventFragment extends Fragment {
         if (eventId != -1L) {
             // Use MainActivity to fetch event details instead of a local ViewModel
             activity.getEventById(eventId).observe(getViewLifecycleOwner(), event -> {
-                if (event != null) {
+                // Only populate if this is a fresh view (not a rotation) 
+                // to avoid overwriting user's unsaved changes.
+                if (event != null && savedInstanceState == null) {
                     binding.etTitle.setText(event.getTitle());
                     binding.etCategory.setText(event.getCategory());
                     binding.etLocation.setText(event.getLocation());
@@ -63,11 +71,18 @@ public class AddEditEventFragment extends Fragment {
         binding.btnSave.setOnClickListener(v -> saveEvent());
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // Persist the selected date across configuration changes (rotation)
+        outState.putLong("selected_date", selectedCalendar.getTimeInMillis());
+    }
+
     /**
      * Shows a DatePickerDialog followed by a TimePickerDialog to select event timing.
      */
     private void showDateTimePicker() {
-        Calendar currentCalendar = Calendar.getInstance();
+        // Start the picker at the currently selected date (or 'now' if it's a new event)
         new DatePickerDialog(
                 requireContext(),
                 (view, year, month, dayOfMonth) -> {
@@ -82,14 +97,14 @@ public class AddEditEventFragment extends Fragment {
                                 selectedCalendar.set(Calendar.MINUTE, minute);
                                 updateDateDisplay();
                             },
-                            currentCalendar.get(Calendar.HOUR_OF_DAY),
-                            currentCalendar.get(Calendar.MINUTE),
+                            selectedCalendar.get(Calendar.HOUR_OF_DAY),
+                            selectedCalendar.get(Calendar.MINUTE),
                             true
                     ).show();
                 },
-                currentCalendar.get(Calendar.YEAR),
-                currentCalendar.get(Calendar.MONTH),
-                currentCalendar.get(Calendar.DAY_OF_MONTH)
+                selectedCalendar.get(Calendar.YEAR),
+                selectedCalendar.get(Calendar.MONTH),
+                selectedCalendar.get(Calendar.DAY_OF_MONTH)
         ).show();
     }
 
