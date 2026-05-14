@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/HomeFragment">
+
+    <fragment
+        android:id="@+id/HomeFragment"
+        android:name="com.app.appdev.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_HomeFragment_to_CreateAdvertFragment"
+            app:destination="@id/CreateAdvertFragment" />
+        <action
+            android:id="@+id/action_HomeFragment_to_ItemListFragment"
+            app:destination="@id/ItemListFragment" />
+        <action
+            android:id="@+id/action_HomeFragment_to_MapsFragment"
+            app:destination="@id/MapsFragment" />
+        <action
+            android:id="@+id/action_HomeFragment_to_MyAdvertsFragment"
+            app:destination="@id/MyAdvertsFragment" />
+    </fragment>
+
+    <action
+        android:id="@+id/action_global_CreateAdvertFragment"
+        app:destination="@id/CreateAdvertFragment" />
+
+    <action
+        android:id="@+id/action_global_MapsFragment"
+        app:destination="@id/MapsFragment" />
+
+    <fragment
+        android:id="@+id/CreateAdvertFragment"
+        android:name="com.app.appdev.CreateAdvertFragment"
+        android:label="Create New Advert"
+        tools:layout="@layout/fragment_create_advert" />
+
+    <fragment
+        android:id="@+id/ItemListFragment"
+        android:name="com.app.appdev.ItemListFragment"
+        android:label="Lost &amp; Found Items"
+        tools:layout="@layout/fragment_item_list">
+        <action
+            android:id="@+id/action_ItemListFragment_to_RemoveItemFragment"
+            app:destination="@id/RemoveItemFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/RemoveItemFragment"
+        android:name="com.app.appdev.RemoveItemFragment"
+        android:label="Item Details"
+        tools:layout="@layout/fragment_remove_item" />
+
+    <fragment
+        android:id="@+id/MapsFragment"
+        android:name="com.app.appdev.MapsFragment"
+        android:label="Map"
+        tools:layout="@layout/fragment_maps" />
+
+    <fragment
+        android:id="@+id/MyAdvertsFragment"
+        android:name="com.app.appdev.MyAdvertsFragment"
+        android:label="My Adverts"
+        tools:layout="@layout/fragment_item_list">
+        <action
+            android:id="@+id/action_MyAdvertsFragment_to_CreateAdvertFragment"
+            app:destination="@id/CreateAdvertFragment" />
+        <action
+            android:id="@+id/action_MyAdvertsFragment_to_RemoveItemFragment"
+            app:destination="@id/RemoveItemFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/PickLocationFragment"
+        android:name="com.app.appdev.PickLocationFragment"
+        android:label="Pick Location"
+        tools:layout="@layout/fragment_pick_location" />
+
+    <action
+        android:id="@+id/action_global_PickLocationFragment"
+        app:destination="@id/PickLocationFragment" />
+
+</navigation>

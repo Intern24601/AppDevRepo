@@ -42,6 +42,7 @@ public class MyAdvertsFragment extends Fragment {
         adapter = new MyAdapter(itemList, item -> {
             Bundle bundle = new Bundle();
             bundle.putSerializable("item", item);
+            bundle.putBoolean("canEdit", true);
             NavHostFragment.findNavController(MyAdvertsFragment.this)
                     .navigate(R.id.action_MyAdvertsFragment_to_RemoveItemFragment, bundle);
         });
